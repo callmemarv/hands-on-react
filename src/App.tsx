@@ -1,15 +1,17 @@
 import React from 'react'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import './App.css'
-import HelloWorld from './component/HelloWorld'
-import logo from './logo.svg'
+import Home from './component/home/Home'
+import NotHome from './component/not-home/NotHome'
 
 function App() {
     return (
         <div className="App">
-            <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo"/>
-                <HelloWorld/>
-            </header>
+            <Routes>
+                <Route path={'/home'} element={<Home/>}/>
+                <Route path={'/not-home'} element={<NotHome/>}/>
+                <Route path={'*'} element={<Navigate to={'/home'}/>}/>
+            </Routes>
         </div>
     )
 }
