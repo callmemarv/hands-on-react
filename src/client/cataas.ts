@@ -1,8 +1,8 @@
 import axios from 'axios'
 import Cat from './Cat'
 
-function getCat(): Promise<Cat> {
-    return axios.get('https://cataas.com/cat?json=true')
+export function getCat(): Promise<Cat> {
+    return axios.get(`https://cataas.com/cat?json=true`)
         .then(result => {
             const data = result.data
             return {
@@ -11,4 +11,12 @@ function getCat(): Promise<Cat> {
         })
 }
 
-export default getCat
+export function getCatWithQuote(quote: string): Promise<Cat> {
+    return axios.get(`https://cataas.com/cat/says/${quote}?json=true`)
+        .then(result => {
+            const data = result.data
+            return {
+                url: data.url
+            }
+        })
+}
