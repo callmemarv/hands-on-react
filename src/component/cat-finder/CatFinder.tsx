@@ -1,51 +1,53 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import Cat from '../../client/Cat'
 import { getCat, getCatWithQuote } from '../../client/cataas'
 import MyTextInput2 from '../input/MyTextInput2'
+import useCatFinderReducer from './CatFinderReducer'
 
 function CatFinder(): JSX.Element {
-    const [processing, setProcessing] = useState(true)
-    const [url, setUrl] = useState('')
-    const [quote, setQuote] = useState('')
+    const [state, dispatch] = useCatFinderReducer({ processing: true, url: '', quote: '' })
 
-    function processCat(catFunction: () => Promise<Cat>): void {
-        setProcessing(true)
+    const processCat = useCallback((catFunction: () => Promise<Cat>) => {
+        dispatch({ type: 'setProcessing', value: true })
         catFunction()
             .then((cat) => {
-                setUrl(cat.url)
+                dispatch({ type: 'setUrl', value: cat.url })
             })
             .finally(() => {
-                setProcessing(false)
+                dispatch({ type: 'setProcessing', value: false })
             })
-    }
+    }, [dispatch])
 
     const refresh = useCallback(() => {
-        if (quote !== '') {
-            processCat(() => {return getCatWithQuote(quote)})
+        if (state.quote !== '') {
+            processCat(() => {return getCatWithQuote(state.quote)})
         } else {
             processCat(getCat)
         }
-    }, [quote])
+    }, [processCat, state.quote])
 
     useEffect(() => {
         processCat(getCat)
-    }, [])
+    }, [processCat])
 
     function handleClick(event: React.MouseEvent<HTMLButtonElement>): void {
         event.preventDefault()
         refresh()
     }
 
-    const imageSrc = `https://cataas.com${url}`
+    const imageSrc = `https://cataas.com${state.url}`
 
-    return processing
+    return state.processing
         ? <>Processing...</>
         : (
             <>
                 <img src={imageSrc} alt={'cat'}/>
                 <br/><br/><br/><br/>
                 <form>
-                    <MyTextInput2 content={quote} onChange={setQuote}/>
+                    <MyTextInput2
+                        content={state.quote}
+                        onChange={(value: string) => {dispatch({ type: 'setQuote', value })}}
+                    />
                     <button type={'submit'} onClick={handleClick}>Meow!</button>
                 </form>
             </>
