@@ -8,7 +8,9 @@ function MyTestableComponent(): JSX.Element {
         <>
             {content}
             <br/><br/><br/><br/>
-            <MyButton2 onClick={() => {setContent('after')}}>Click me</MyButton2>
+            <MyButton2 onClick={() => {setContent('after')}}>
+                Click me
+            </MyButton2>
         </>
     )
 }
